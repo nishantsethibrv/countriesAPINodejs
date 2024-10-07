@@ -89,6 +89,10 @@ app.post('/country', upload.single('image'), (req, res) => {
       return res.status(400).json({ message: 'Rank must be a numeric value.' });
     }
   
+    fs.readFile('./data.json', 'utf8', (err, data) => {
+      if (err) {
+          return res.status(500).json({ message: 'Error reading data file' });
+      }
     let flag = req.file ? `images/${req.file.filename}` : '';
   
     const newCountry = {
@@ -112,14 +116,14 @@ app.post('/country', upload.single('image'), (req, res) => {
     }
     countriesData.countries.push(newCountry);
   
-    fs.writeFile(path.join(__dirname, 'data.json'), JSON.stringify(countriesData, null, 2), (err) => {
+    fs.writeFile(path.join(__dirname, './data.json'), JSON.stringify(countriesData, null, 2), (err) => {
       if (err) {
         return res.status(500).json({ message: 'Failed to save country data.' });
       }
       res.status(201).json({ message: 'Country added successfully!', country: newCountry });
     });
   });
-  
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
